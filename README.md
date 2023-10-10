@@ -4,7 +4,7 @@
 - Ezequiel Cura
 - DNI: 44160534
 
-## Proyecto: 2 DISPLAY SEGMENTOS, MOTOR, SENSOR DE TEMPERATURA & SLIDESWITCH
+## Proyecto: 3 DISPLAY SEGMENTOS, MOTOR, SENSOR DE TEMPERATURA & SLIDESWITCH
 ![Tinkercad](/Imagenes/Imagen_proyecto.png)
 
 
