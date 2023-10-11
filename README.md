@@ -7,9 +7,14 @@
 ## Proyecto: 3 DISPLAY SEGMENTOS, MOTOR, SENSOR DE TEMPERATURA & SLIDESWITCH
 ![Tinkercad](/Imagenes/Imagen_proyecto.png)
 
-
 ## Descripción
 Este código es un programa escrito en el lenguaje de programación C++. Su objetivo es controlar una serie de displays LED de siete segmentos y realizar diferentes acciones basadas en la lectura de sensores y entradas de usuario.
+
+#### Componentes agregados
+
+Los componentes que agregue fueron un motor cc y el sensor de temperatura:
+  - La funcion del motor cc es que cambia la direccion en la que gira el motor segun del estado del slideSwitch.
+  - Para el sensor de temperatura tuve que agregar un display para poder mostrar la temperatura con 3 cifras, para poder ver la temperatura tenes que mantener apretado el pulsador.
 
 ### Funcion setup
 
