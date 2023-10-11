@@ -162,6 +162,7 @@ void mostrar_count(int numero)
 
 void prenderLeds(int count)
 {
+  // Apaga todas las leds, como un reset para luego prender las leds correspondientes
   digitalWrite(A, LOW);
   digitalWrite(B, LOW);
   digitalWrite(C, LOW);
@@ -173,82 +174,82 @@ void prenderLeds(int count)
   switch (count)
   {
     case 0:
-    	digitalWrite(A, HIGH);
-        digitalWrite(B, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(D, HIGH);
-        digitalWrite(E, HIGH);
-        digitalWrite(F, HIGH);
+    	digitalWrite(A, HIGH); // prendo las leds que forman un cero
+      digitalWrite(B, HIGH);
+      digitalWrite(C, HIGH);
+      digitalWrite(D, HIGH);
+      digitalWrite(E, HIGH);
+      digitalWrite(F, HIGH);
     	break;
     
     case 1:
-    	digitalWrite(B, HIGH);
+    	digitalWrite(B, HIGH); // prendo las leds que forman un uno
   		digitalWrite(C, HIGH);
   		break;
 
     case 2:
-    	digitalWrite(A, HIGH);
-        digitalWrite(B, HIGH);
-        digitalWrite(G, HIGH);
-        digitalWrite(D, HIGH);
-        digitalWrite(E, HIGH);
-        break;
+    	digitalWrite(A, HIGH); // prendo las leds que forman un dos
+      digitalWrite(B, HIGH);
+      digitalWrite(G, HIGH);
+      digitalWrite(D, HIGH);
+      digitalWrite(E, HIGH);
+      break;
 
     case 3:
-    	digitalWrite(A, HIGH);
-        digitalWrite(B, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(D, HIGH);
-        digitalWrite(G, HIGH);
-        break;
+    	digitalWrite(A, HIGH); // prendo las leds que forman un tres
+      digitalWrite(B, HIGH);
+      digitalWrite(C, HIGH);
+      digitalWrite(D, HIGH);
+      digitalWrite(G, HIGH);
+      break;
 
     case 4:
-        digitalWrite(B, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(G, HIGH);
-        digitalWrite(F, HIGH);
-        break;
+      digitalWrite(B, HIGH); // prendo las leds que forman un cuatro
+      digitalWrite(C, HIGH);
+      digitalWrite(G, HIGH);
+      digitalWrite(F, HIGH);
+      break;
 
     case 5:
-        digitalWrite(A, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(D, HIGH);
-        digitalWrite(F, HIGH);
-        digitalWrite(G, HIGH);
-        break;
+      digitalWrite(A, HIGH); // prendo las leds que forman un cinco
+      digitalWrite(C, HIGH);
+      digitalWrite(D, HIGH);
+      digitalWrite(F, HIGH);
+      digitalWrite(G, HIGH);
+      break;
 
     case 6:
-        digitalWrite(A, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(D, HIGH);
-        digitalWrite(E, HIGH);
-        digitalWrite(F, HIGH);
-        digitalWrite(G, HIGH);
-        break;
+      digitalWrite(A, HIGH); // prendo las leds que forman un seis
+      digitalWrite(C, HIGH);
+      digitalWrite(D, HIGH);
+      digitalWrite(E, HIGH);
+      digitalWrite(F, HIGH);
+      digitalWrite(G, HIGH);
+      break;
 
     case 7:
-        digitalWrite(A, HIGH);
-        digitalWrite(B, HIGH);
-        digitalWrite(C, HIGH);
-        break;
+      digitalWrite(A, HIGH); // prendo las leds que forman un siete
+      digitalWrite(B, HIGH);
+      digitalWrite(C, HIGH);
+      break;
 
     case 8:
-        digitalWrite(A, HIGH);
-        digitalWrite(B, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(D, HIGH);
-        digitalWrite(E, HIGH);
-        digitalWrite(F, HIGH);
-        digitalWrite(G, HIGH);
-        break;
+      digitalWrite(A, HIGH); // prendo las leds que forman un ocho
+      digitalWrite(B, HIGH);
+      digitalWrite(C, HIGH);
+      digitalWrite(D, HIGH);
+      digitalWrite(E, HIGH);
+      digitalWrite(F, HIGH);
+      digitalWrite(G, HIGH);
+      break;
 
     case 9:
-        digitalWrite(A, HIGH);
-        digitalWrite(B, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(F, HIGH);
-      	digitalWrite(G, HIGH);
-        break;
+      digitalWrite(A, HIGH); // prendo las leds que forman un nueve
+      digitalWrite(B, HIGH);
+      digitalWrite(C, HIGH);
+      digitalWrite(F, HIGH);
+      digitalWrite(G, HIGH);
+      break;
 
   }
   
