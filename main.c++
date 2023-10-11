@@ -4,19 +4,29 @@
 #define D 8
 #define E 9
 #define F 11
-#define G 10
-#define SUBE 5
-#define BAJA 4
-#define RESET 6  
-#define DECENA A5
-#define UNIDAD A4
+#define G 10 
+
+#define CENTENA A5
+#define DECENA A4
+#define UNIDAD A3
+
 #define TIEMPO 10
+#define SENSOR A0
+#define BOTON_SENSOR 3
+
+#define NUMEROS 2
+
+int tiempo1 = 0;
+int tiempo2 = 0;
 
 int count = 0;
-int prev_presiono_sube = 0;
-int prev_presiono_baja = 0;
-int prev_presiono_reset = 0;
- 
+int count_primos = 2;
+int guardar_num ;
+
+int lectura;
+int temperatura;
+
+
 void setup()
 {
   pinMode(A, OUTPUT);
@@ -26,89 +36,133 @@ void setup()
   pinMode(E, OUTPUT);
   pinMode(F, OUTPUT);
   pinMode(G, OUTPUT);
-  pinMode(SUBE, INPUT_PULLUP);
-  pinMode(BAJA, INPUT_PULLUP);
-  pinMode(RESET, INPUT_PULLUP );
+  
   pinMode(DECENA, OUTPUT);
   pinMode(UNIDAD, OUTPUT); 
+  pinMode(CENTENA, OUTPUT);
+  
+  pinMode(NUMEROS, INPUT);
+  pinMode(BOTON_SENSOR, INPUT_PULLUP);
   
   Serial.begin(9600);
+  tiempo1 = millis();
 }
+
 
 void loop()
 {
-  int press_sube = digitalRead(SUBE);
-  int press_baja = digitalRead(BAJA);
-  int press_reset = digitalRead(RESET);
-  
-  //Aca se fija si presionamos el boton de SUBE, leyendo con el digitalRead.
-  // Aca tambien esta el anti rebote para que al apretar una vez solo suba 1 vez.
-  // El anti-rebote funciona gracias a una variable que nos guardamos el estado previo del boton, empieza en 0.
-  // al presionar el boton por primera vez el estado previo lo vamos a poner a 1 y va a ser asi hasta 
-  // que suelte el boton que le volvemos a igualar a 0
-  if(press_sube == 0)
-  {
-    if (prev_presiono_sube == 0)
+  medir_tiempo();
+  leer_temperatura();
+ 
+  int slide_valor = digitalRead(NUMEROS);
+  int boton_sensor = digitalRead(BOTON_SENSOR);
+
+  // Se fija que tiene que mostrar en los displays dependiendo del estado del slideSwitch o del pulsador
+  if(boton_sensor == 0){
+    mostrar_count(temperatura); 
+  }
+  else if (slide_valor == 0){
+    // Si el contador es mayor a 99 el contador se reinicia a 0
+    if(count > 99)
     {
-       count += 1;
-       prev_presiono_sube = 1;
+     count = 0; 
     }
-  }else
-   {
-     prev_presiono_sube = 0; 
-   }
-  //-------------------------------------------
-  if (press_baja == 0)
+    mostrar_count(count);
+    //Aca hace que el motor cc gire en sentido horario
+    digitalWrite(4, HIGH);
+    digitalWrite(5,LOW);
+    count_primos = 0;
+
+  }
+  else
   {
-    if(prev_presiono_baja == 0)
+    // Aca me fijo que numeros del count_primos son primos, la funcion num_primos retorna un booleano segun si el numero es primo o no
+    bool num_primo = num_primos(count_primos);
+    if (num_primo == true)
     {
-      count-=1;
-      prev_presiono_baja = 1;
+      // Si el numero es primo lo muestro en los displays y me guardo en una variable el ultimo primo
+      guardar_num = count_primos;
+      mostrar_count(count_primos);
+    }else{
+      // Si el numero no es primo muestro el ultimo primo hasta encontrar uno nuevo
+      mostrar_count(guardar_num);
     }
-  }else
-  {
-    prev_presiono_baja = 0; 
+
+    //Aca hace que el motor cc gire en sentido anti horario
+    digitalWrite(4, LOW);
+    digitalWrite(5,HIGH);
+    count = 0;
   }
-    
-  //--------------------------------------------
-  // Aca tenemos las logicas para que no se pase de un numero de 9 cifras y que el boton reset vuelva el contador a 0
-  if (press_reset == 0)
-  {
-   count = 0; 
+}
+
+bool num_primos(int num)
+{
+  // Aca hay una verificacion por si llega un numero negativo
+  if (num <= 1) {
+    return false;
   }
-  
-  if (count > 99 )
-  {
-   count = 0 ;
+  // Este for se fija si hay algun divisor ademas del 1 y el numero mismo
+  // Si lo encuentra significa que ya no es primo
+  for (int i = 2; i <= num / 2; i++) {
+    if (num % i == 0) {
+      return false; 
+    }
   }
-  if(count < 0)
-  {
-   count = 99 ;
-  }
-  
-  mostrar_count(count) ;
+  return true;
   
 }
 
-void mostrar_count(int count)
+void medir_tiempo(){
+  tiempo2 = millis();
+  
+  // Le suma 1 a los 2 contadores cada medio segundo 
+  if( tiempo2 >  tiempo1 + 500 ){
+    tiempo1 = millis();
+	  count += 1;
+    count_primos +=1;
+  }
+  
+}
+
+void leer_temperatura(){
+  // Esta funcion simplemente lee el valor del sensor de temperatura
+  // Luego con el metodo map lo transformamos a celcius
+  lectura = analogRead(SENSOR);
+  temperatura = map(lectura,20,358,-40,125);
+  
+}
+
+void mostrar_count(int numero)
 {
-  // Aca pasa la logica de multiplexacion, donde usando pines creo una diferencia potencial 
-  //para prender el display que yo quiero
-  prenderLeds(count - 10 * ((int)count / 10));
+  // Aca pasa la logica de multiplexacion, donde usando pines creo una diferencia potencial para prender el display
+  // que yo quiero
+  prenderLeds(numero - 10 * ((int)numero / 10));
   digitalWrite(UNIDAD,LOW);
   digitalWrite(DECENA,HIGH);
+  digitalWrite(CENTENA, HIGH);
   
-  delay(50);
+  delay(15);
+   // Lo que pasa aca es que cuando el numero es de 3 cifras tengo un error para conseguir la CENTENA entonces hice un if para corregirlo
+  if ( numero > 99){
+      prenderLeds(((int)numero / 10)-10);
+  }else{
+    prenderLeds((int)numero / 10);
+  }
   
   digitalWrite(UNIDAD,HIGH);
   digitalWrite(DECENA,LOW);
-  prenderLeds((int)count / 10);
+  digitalWrite(CENTENA, HIGH);
 
-  delay(50);
+  delay(15);
+  
+  prenderLeds((int)numero / 100);
+  digitalWrite(UNIDAD,HIGH);
+  digitalWrite(DECENA,HIGH);
+  digitalWrite(CENTENA, LOW);
+
+  delay(15);
   
 }
-
-
 
 void prenderLeds(int count)
 {
@@ -204,6 +258,8 @@ void prenderLeds(int count)
   }
   
 }
+
+
 
 
 
