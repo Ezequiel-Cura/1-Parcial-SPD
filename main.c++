@@ -13,6 +13,7 @@
 #define TIEMPO 10
 #define SENSOR A0
 #define BOTON_SENSOR 3
+#define PHOTODIODE 6
 
 #define NUMEROS 2
 
@@ -43,57 +44,64 @@ void setup()
   
   pinMode(NUMEROS, INPUT);
   pinMode(BOTON_SENSOR, INPUT_PULLUP);
-  
+  pinMode(PHOTODIODE, INPUT_PULLUP);
+
   Serial.begin(9600);
   tiempo1 = millis();
 }
 
-
 void loop()
 {
-  medir_tiempo();
-  leer_temperatura();
- 
-  int slide_valor = digitalRead(NUMEROS);
-  int boton_sensor = digitalRead(BOTON_SENSOR);
-
-  // Se fija que tiene que mostrar en los displays dependiendo del estado del slideSwitch o del pulsador
-  if(boton_sensor == 0){
-    mostrar_count(temperatura); 
-  }
-  else if (slide_valor == 0){
-    // Si el contador es mayor a 99 el contador se reinicia a 0
-    if(count > 99)
-    {
-     count = 0; 
-    }
-    mostrar_count(count);
-    //Aca hace que el motor cc gire en sentido horario
-    digitalWrite(4, HIGH);
-    digitalWrite(5,LOW);
-    count_primos = 0;
-
-  }
-  else
+  int lectura_photodiode = digitalRead(PHOTODIODE);
+  if ( lectura_photodiode == 1)
   {
-    // Aca me fijo que numeros del count_primos son primos, la funcion num_primos retorna un booleano segun si el numero es primo o no
-    bool num_primo = num_primos(count_primos);
-    if (num_primo == true)
-    {
-      // Si el numero es primo lo muestro en los displays y me guardo en una variable el ultimo primo
-      guardar_num = count_primos;
-      mostrar_count(count_primos);
-    }else{
-      // Si el numero no es primo muestro el ultimo primo hasta encontrar uno nuevo
-      mostrar_count(guardar_num);
-    }
+    digitalWrite(CENTENA, HIGH);
+    digitalWrite(DECENA, HIGH);
+    digitalWrite(UNIDAD, HIGH);
+  }else
+  {
+      medir_tiempo();
+      leer_temperatura();
 
-    //Aca hace que el motor cc gire en sentido anti horario
-    digitalWrite(4, LOW);
-    digitalWrite(5,HIGH);
-    count = 0;
-  }
+      int slide_valor = digitalRead(NUMEROS);
+      int boton_sensor = digitalRead(BOTON_SENSOR);
+
+      // Se fija que tiene que mostrar en los displays dependiendo del estado del slideSwitch o del pulsador
+      if(boton_sensor == 0){
+        mostrar_count(temperatura); 
+      }
+      else if (slide_valor == 0){
+        // Si el contador es mayor a 99 el contador se reinicia a 0
+        if(count > 99)
+        {
+         count = 0; 
+        }
+        mostrar_count(count);
+
+        digitalWrite(4, HIGH);
+        digitalWrite(5,LOW);
+        count_primos = 0;
+
+      }
+      else
+      {
+
+        bool num_primo = num_primos(count_primos);
+        if (num_primo == true)
+        {
+          guardar_num = count_primos;
+          mostrar_count(count_primos);
+        }else{
+          mostrar_count(guardar_num);
+        }
+
+        digitalWrite(4, LOW);
+        digitalWrite(5,HIGH);
+        count = 0;
+      }
+   }
 }
+
 
 bool num_primos(int num)
 {

@@ -1,11 +1,11 @@
-# PARCIAL SPD ( SEGUNDA PARTE)
+# PARCIAL SPD ( TERCERA PARTE)
 
 ## Integrantes 
 - Ezequiel Cura
 - DNI: 44160534
 
-## Proyecto: 3 DISPLAY SEGMENTOS, MOTOR, SENSOR DE TEMPERATURA & SLIDESWITCH
-![Tinkercad](/Imagenes/Imagen_proyecto.png)
+## Proyecto: 3 DISPLAY SEGMENTOS, MOTOR, SENSOR DE TEMPERATURA, SLIDESWITCH & PHOTODIODE
+![Tinkercad](/Imagenes/tercera_parte/tercera_parte_proyecto.png)
 
 ## Descripción
 Este código es un programa escrito en el lenguaje de programación C++. Su objetivo es controlar una serie de displays LED de siete segmentos y realizar diferentes acciones basadas en la lectura de sensores y entradas de usuario.
@@ -15,6 +15,7 @@ Este código es un programa escrito en el lenguaje de programación C++. Su obje
 Los componentes que agregue fueron un motor cc y el sensor de temperatura:
   - La funcion del motor cc es que cambia la direccion en la que gira el motor segun del estado del slideSwitch.
   - Para el sensor de temperatura tuve que agregar un display para poder mostrar la temperatura con 3 cifras, para poder ver la temperatura tenes que mantener apretado el pulsador.
+  - Agregue un photodiode en el si hay suficiente luz se prende el sistema y si no la hay se apaga.
 
 ### Funcion setup
 
@@ -38,11 +39,11 @@ void setup()
   
   pinMode(NUMEROS, INPUT);
   pinMode(BOTON_SENSOR, INPUT_PULLUP);
+  pinMode(PHOTODIODE, INPUT_PULLUP);
   
   Serial.begin(9600);
   tiempo1 = millis();
 }
-
 ~~~
 
 ### Función principal
@@ -53,54 +54,59 @@ Esta es la función principal del programa que se ejecuta continuamente en un bu
 - Luego, se leen los estados de un interruptor (slide_valor) y un botón (boton_sensor).
 - Dependiendo de los estados del interruptor y el botón, se llama a la función mostrar_count() para mostrar números en los displays de siete segmentos.
 - Si el botón está presionado, muestra la temperatura. Si el interruptor está en una posición, muestra números que incrementan. Si está en la otra posición, muestra números primos.
+- El unico cambio que se hizo en esta parte fue agrega un if y un else para controlar si el sistema funciona o no, segun si el photodiode recibe suficiente intesidad de luz.
 
 ~~~ C++ (lenguaje en el que esta escrito)
 void loop()
 {
-
-  medir_tiempo();
-  leer_temperatura();
- 
-  int slide_valor = digitalRead(NUMEROS);
-  int boton_sensor = digitalRead(BOTON_SENSOR);
-
-  // Se fija que tiene que mostrar en los displays dependiendo del estado del slideSwitch o del pulsador
-  if(boton_sensor == 0){
-    mostrar_count(temperatura); 
-  }
-  else if (slide_valor == 0){
-    // Si el slideswitch tiene valor 0 muestro el contador 
-    if(count > 99)
-    {
-     count = 0; 
-    }
-    mostrar_count(count);
-    
-    //Aca hace que el motor cc gire en sentido horario
-    digitalWrite(4, HIGH);
-    digitalWrite(5,LOW);
-    count_primos = 0;
-
-  }
-  else
+  int lectura_photodiode = digitalRead(PHOTODIODE);
+  if ( lectura_photodiode == 1)
   {
-    // Aca me fijo que numeros del count_primos son primos, la funcion num_primos retorna un booleano segun si el numero es primo o no
-    bool num_primo = num_primos(count_primos);
-    if (num_primo == true)
-    {
-      // Si el numero es primo lo muestro en los displays y me guardo en una variable el ultimo primo
-      guardar_num = count_primos;
-      mostrar_count(count_primos);
-    }else{
-      // Si el numero no es primo muestro el ultimo primo hasta encontrar uno nuevo
-      mostrar_count(guardar_num);
-    }
+    digitalWrite(CENTENA, HIGH);
+    digitalWrite(DECENA, HIGH);
+    digitalWrite(UNIDAD, HIGH);
+  }else
+  {
+      medir_tiempo();
+      leer_temperatura();
 
-    //Aca hace que el motor cc gire en sentido anti horario
-    digitalWrite(4, LOW);
-    digitalWrite(5,HIGH);
-    count = 0;
-  }
+      int slide_valor = digitalRead(NUMEROS);
+      int boton_sensor = digitalRead(BOTON_SENSOR);
+
+      // Se fija que tiene que mostrar en los displays dependiendo del estado del slideSwitch o del pulsador
+      if(boton_sensor == 0){
+        mostrar_count(temperatura); 
+      }
+      else if (slide_valor == 0){
+        // Si el contador es mayor a 99 el contador se reinicia a 0
+        if(count > 99)
+        {
+         count = 0; 
+        }
+        mostrar_count(count);
+
+        digitalWrite(4, HIGH);
+        digitalWrite(5,LOW);
+        count_primos = 0;
+
+      }
+      else
+      {
+
+        bool num_primo = num_primos(count_primos);
+        if (num_primo == true)
+        {
+          guardar_num = count_primos;
+          mostrar_count(count_primos);
+        }else{
+          mostrar_count(guardar_num);
+        }
+
+        digitalWrite(4, LOW);
+        digitalWrite(5,HIGH);
+        count = 0;
+      }
+   }
 }
 ~~~
 ### Funcion mostrar_count
@@ -303,7 +309,8 @@ void prenderLeds(int count)
 En resumen, el código controla la visualización de números en displays de siete segmentos en función de la posición de un interruptor y un botón, muestra temperaturas leídas de un sensor y realiza operaciones con números primos. También contiene funciones para determinar si un número es primo y para controlar la visualización en los displays.
 
 ## Diagrama del proyecto
-![Diagrama](/Imagenes/Diagrama_del_proyecto.png)
+![Diagrama](/Imagenes/tercera_parte/diagrama_tercera_parte_1.png)
+![Diagrama](/Imagenes/tercera_parte/diagrama_tercera_parte_2.png)
 
 
 
