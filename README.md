@@ -69,13 +69,14 @@ void loop()
     mostrar_count(temperatura); 
   }
   else if (slide_valor == 0){
-    
+    // Si el slideswitch tiene valor 0 muestro el contador 
     if(count > 99)
     {
      count = 0; 
     }
     mostrar_count(count);
     
+    //Aca hace que el motor cc gire en sentido horario
     digitalWrite(4, HIGH);
     digitalWrite(5,LOW);
     count_primos = 0;
@@ -83,17 +84,19 @@ void loop()
   }
   else
   {
-  
+    // Aca me fijo que numeros del count_primos son primos, la funcion num_primos retorna un booleano segun si el numero es primo o no
     bool num_primo = num_primos(count_primos);
     if (num_primo == true)
     {
+      // Si el numero es primo lo muestro en los displays y me guardo en una variable el ultimo primo
       guardar_num = count_primos;
       mostrar_count(count_primos);
     }else{
-      
+      // Si el numero no es primo muestro el ultimo primo hasta encontrar uno nuevo
       mostrar_count(guardar_num);
     }
 
+    //Aca hace que el motor cc gire en sentido anti horario
     digitalWrite(4, LOW);
     digitalWrite(5,HIGH);
     count = 0;
@@ -115,9 +118,9 @@ void mostrar_count(int numero)
   digitalWrite(CENTENA, HIGH);
   
   delay(15);
-  
+  // Lo que pasa aca es que cuando el numero es de 3 cifras tengo un error para conseguir la CENTENA entonces hice un if para corregirlo
   if ( numero > 99){
-      prenderLeds(((int)numero / 10)-10);
+    prenderLeds(((int)numero / 10)-10);
   }else{
     prenderLeds((int)numero / 10);
   }
@@ -145,10 +148,12 @@ Esta función toma un número entero num como argumento y devuelve true si es un
 ~~~ C++ (lenguaje en el que esta escrito)
 bool num_primos(int num)
 {
+  // Aca hay una verificacion por si llega un numero negativo
   if (num <= 1) {
     return false;
   }
-
+  // Este for se fija si hay algun divisor ademas del 1 y el numero mismo
+  // Si lo encuentra significa que ya no es primo
   for (int i = 2; i <= num / 2; i++) {
     if (num % i == 0) {
       return false; 
@@ -163,6 +168,7 @@ bool num_primos(int num)
 ### Funcion medir_tiempo
 
 Esta función actualiza los contadores de tiempo count y count_primos cada medio segundo (500 ms). Se utiliza para controlar la velocidad de incremento de los números.
+Se utiliza la funcion millis para conseguir y actualizar los segundos de ejecucion del programa.
 
 ~~~ C++ (lenguaje en el que esta escrito)
 void medir_tiempo(){
@@ -185,6 +191,8 @@ Esta función lee un valor analógico del sensor conectado al pin SENSOR y lo ma
 
 ~~~ C++ (lenguaje en el que esta escrito)
 void leer_temperatura(){
+  // Esta funcion simplemente lee el valor del sensor de temperatura
+  // Luego con el metodo map lo transformamos a celcius
   lectura = analogRead(SENSOR);
   temperatura = map(lectura,20,358,-40,125);
   
@@ -199,6 +207,7 @@ Esta función enciende los segmentos LED correspondientes en los displays de sie
 
 void prenderLeds(int count)
 {
+  // Apaga todas las leds, como un reset para luego prender las leds correspondientes
   digitalWrite(A, LOW);
   digitalWrite(B, LOW);
   digitalWrite(C, LOW);
@@ -210,85 +219,83 @@ void prenderLeds(int count)
   switch (count)
   {
     case 0:
-    	digitalWrite(A, HIGH);
-        digitalWrite(B, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(D, HIGH);
-        digitalWrite(E, HIGH);
-        digitalWrite(F, HIGH);
+    	digitalWrite(A, HIGH); // prendo las leds que forman un cero
+      digitalWrite(B, HIGH);
+      digitalWrite(C, HIGH);
+      digitalWrite(D, HIGH);
+      digitalWrite(E, HIGH);
+      digitalWrite(F, HIGH);
     	break;
     
     case 1:
-    	digitalWrite(B, HIGH);
+    	digitalWrite(B, HIGH); // prendo las leds que forman un uno
   		digitalWrite(C, HIGH);
   		break;
 
     case 2:
-    	digitalWrite(A, HIGH);
-        digitalWrite(B, HIGH);
-        digitalWrite(G, HIGH);
-        digitalWrite(D, HIGH);
-        digitalWrite(E, HIGH);
-        break;
+    	digitalWrite(A, HIGH); // prendo las leds que forman un dos
+      digitalWrite(B, HIGH);
+      digitalWrite(G, HIGH);
+      digitalWrite(D, HIGH);
+      digitalWrite(E, HIGH);
+      break;
 
     case 3:
-    	digitalWrite(A, HIGH);
-        digitalWrite(B, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(D, HIGH);
-        digitalWrite(G, HIGH);
-        break;
+    	digitalWrite(A, HIGH); // prendo las leds que forman un tres
+      digitalWrite(B, HIGH);
+      digitalWrite(C, HIGH);
+      digitalWrite(D, HIGH);
+      digitalWrite(G, HIGH);
+      break;
 
     case 4:
-        digitalWrite(B, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(G, HIGH);
-        digitalWrite(F, HIGH);
-        break;
+      digitalWrite(B, HIGH); // prendo las leds que forman un cuatro
+      digitalWrite(C, HIGH);
+      digitalWrite(G, HIGH);
+      digitalWrite(F, HIGH);
+      break;
 
     case 5:
-        digitalWrite(A, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(D, HIGH);
-        digitalWrite(F, HIGH);
-        digitalWrite(G, HIGH);
-        break;
+      digitalWrite(A, HIGH); // prendo las leds que forman un cinco
+      digitalWrite(C, HIGH);
+      digitalWrite(D, HIGH);
+      digitalWrite(F, HIGH);
+      digitalWrite(G, HIGH);
+      break;
 
     case 6:
-        digitalWrite(A, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(D, HIGH);
-        digitalWrite(E, HIGH);
-        digitalWrite(F, HIGH);
-        digitalWrite(G, HIGH);
-        break;
+      digitalWrite(A, HIGH); // prendo las leds que forman un seis
+      digitalWrite(C, HIGH);
+      digitalWrite(D, HIGH);
+      digitalWrite(E, HIGH);
+      digitalWrite(F, HIGH);
+      digitalWrite(G, HIGH);
+      break;
 
     case 7:
-        digitalWrite(A, HIGH);
-        digitalWrite(B, HIGH);
-        digitalWrite(C, HIGH);
-        break;
+      digitalWrite(A, HIGH); // prendo las leds que forman un siete
+      digitalWrite(B, HIGH);
+      digitalWrite(C, HIGH);
+      break;
 
     case 8:
-        digitalWrite(A, HIGH);
-        digitalWrite(B, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(D, HIGH);
-        digitalWrite(E, HIGH);
-        digitalWrite(F, HIGH);
-        digitalWrite(G, HIGH);
-        break;
+      digitalWrite(A, HIGH); // prendo las leds que forman un ocho
+      digitalWrite(B, HIGH);
+      digitalWrite(C, HIGH);
+      digitalWrite(D, HIGH);
+      digitalWrite(E, HIGH);
+      digitalWrite(F, HIGH);
+      digitalWrite(G, HIGH);
+      break;
 
     case 9:
-        digitalWrite(A, HIGH);
-        digitalWrite(B, HIGH);
-        digitalWrite(C, HIGH);
-        digitalWrite(F, HIGH);
-      	digitalWrite(G, HIGH);
-        break;
-
+      digitalWrite(A, HIGH); // prendo las leds que forman un nueve
+      digitalWrite(B, HIGH);
+      digitalWrite(C, HIGH);
+      digitalWrite(F, HIGH);
+      digitalWrite(G, HIGH);
+      break;
   }
-  
 }
 
 ~~~
