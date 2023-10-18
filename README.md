@@ -315,4 +315,4 @@ En resumen, el código controla la visualización de números en displays de sie
 
 
 ## :robot: Link al proyecto
-- [proyecto](https://www.tinkercad.com/things/65sPpmw0BxS-copy-of-segunda-parte-parcial-ezequiel-cura/editel?sharecode=uu9OWa0VeYLR6PSS4rqcE32mPV5wVpjMcVhsprEm2hs)
+- [proyecto](https://www.tinkercad.com/things/3VbWDEl0gNA-3-parte-parcial-ezequiel-cura/editel?sharecode=s7FcqKXCGYJZ5Y6CVbaX9HXvrPHIXqqRdXi-oCgXPoU)
