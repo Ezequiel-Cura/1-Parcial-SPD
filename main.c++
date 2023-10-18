@@ -21,7 +21,7 @@ int tiempo1 = 0;
 int tiempo2 = 0;
 
 int count = 0;
-int count_primos = 2;
+int count_impares = 2;
 int guardar_num ;
 
 int lectura;
@@ -45,10 +45,11 @@ void setup()
   pinMode(NUMEROS, INPUT);
   pinMode(BOTON_SENSOR, INPUT_PULLUP);
   pinMode(PHOTODIODE, INPUT_PULLUP);
-
+  
   Serial.begin(9600);
   tiempo1 = millis();
 }
+
 
 void loop()
 {
@@ -80,17 +81,17 @@ void loop()
 
         digitalWrite(4, HIGH);
         digitalWrite(5,LOW);
-        count_primos = 0;
+        count_impares = 0;
 
       }
       else
       {
 
-        bool num_primo = num_primos(count_primos);
-        if (num_primo == true)
+        bool num_impar = num_impares(count_impares);
+        if (num_impar == true)
         {
-          guardar_num = count_primos;
-          mostrar_count(count_primos);
+          guardar_num = count_impares;
+          mostrar_count(count_impares);
         }else{
           mostrar_count(guardar_num);
         }
@@ -102,42 +103,31 @@ void loop()
    }
 }
 
-
-bool num_primos(int num)
-{
-  // Aca hay una verificacion por si llega un numero negativo
-  if (num <= 1) {
-    return false;
-  }
-  // Este for se fija si hay algun divisor ademas del 1 y el numero mismo
-  // Si lo encuentra significa que ya no es primo
-  for (int i = 2; i <= num / 2; i++) {
-    if (num % i == 0) {
-      return false; 
+bool num_impares(int num)
+{  
+	if(num % 2 != 0)
+    {
+     return true ;
     }
-  }
-  return true;
-  
+  	else
+    {
+     return false ;
+    }
 }
 
 void medir_tiempo(){
   tiempo2 = millis();
-  
   // Le suma 1 a los 2 contadores cada medio segundo 
   if( tiempo2 >  tiempo1 + 500 ){
     tiempo1 = millis();
 	  count += 1;
-    count_primos +=1;
+    count_impares +=1;
   }
-  
 }
 
 void leer_temperatura(){
-  // Esta funcion simplemente lee el valor del sensor de temperatura
-  // Luego con el metodo map lo transformamos a celcius
   lectura = analogRead(SENSOR);
   temperatura = map(lectura,20,358,-40,125);
-  
 }
 
 void mostrar_count(int numero)
@@ -150,7 +140,7 @@ void mostrar_count(int numero)
   digitalWrite(CENTENA, HIGH);
   
   delay(15);
-   // Lo que pasa aca es que cuando el numero es de 3 cifras tengo un error para conseguir la CENTENA entonces hice un if para corregirlo
+  
   if ( numero > 99){
       prenderLeds(((int)numero / 10)-10);
   }else{

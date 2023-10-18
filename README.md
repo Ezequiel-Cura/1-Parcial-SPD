@@ -1,4 +1,4 @@
-# PARCIAL SPD ( TERCERA PARTE)
+# PARCIAL SPD ( CUARTA PARTE)
 
 ## Integrantes 
 - Ezequiel Cura
@@ -147,26 +147,26 @@ void mostrar_count(int numero)
 }
 ~~~
 
-### Funcion num_primos
+### Funcion num_impares
 
-Esta función toma un número entero num como argumento y devuelve true si es un número primo, y false si no lo es. Utiliza un bucle para verificar si el número es divisible por otros números, y si no lo es, se considera primo.
+La funcion num_impares toma un numero int como argumento y dentro de la funcion verifica que el numero sea impar.
+Se verifica de la siguiente manera:
+- Se verifica si num % 2 no es igual a 0 (es decir, el residuo no es igual a 0). Esto se hace con la expresión num % 2 != 0.
+- Si la condición es verdadera, significa que el número es impar, y en ese caso, la función devuelve true.
+- Si la condición es falsa, significa que el número es par, y en ese caso, la función devuelve false.
+
 
 ~~~ C++ (lenguaje en el que esta escrito)
-bool num_primos(int num)
-{
-  // Aca hay una verificacion por si llega un numero negativo
-  if (num <= 1) {
-    return false;
-  }
-  // Este for se fija si hay algun divisor ademas del 1 y el numero mismo
-  // Si lo encuentra significa que ya no es primo
-  for (int i = 2; i <= num / 2; i++) {
-    if (num % i == 0) {
-      return false; 
+bool num_impares(int num)
+{  
+	if(num % 2 != 0)
+    {
+     return true ;
     }
-  }
-  return true;
-  
+  	else
+    {
+     return false ;
+    }
 }
 
 ~~~
@@ -315,4 +315,4 @@ En resumen, el código controla la visualización de números en displays de sie
 
 
 ## :robot: Link al proyecto
-- [proyecto](https://www.tinkercad.com/things/3VbWDEl0gNA-3-parte-parcial-ezequiel-cura/editel?sharecode=s7FcqKXCGYJZ5Y6CVbaX9HXvrPHIXqqRdXi-oCgXPoU)
+- [Proyecto](https://www.tinkercad.com/things/kiYpaf3eyQz-copy-of-3-parte-parcial-ezequiel-cura/editel?sharecode=mgPzwsFieqlfpKbYVlydK5DRLxCf0Vo5KQw5JGIvAVw)
