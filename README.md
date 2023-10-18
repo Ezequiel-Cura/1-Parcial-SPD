@@ -49,17 +49,16 @@ void setup()
 ### Función principal
 
 Esta es la función principal del programa que se ejecuta continuamente en un bucle.
+Esta función se ejecuta en un ciclo continuo después de la función setup(). Su principal tarea es leer un fotodiodo y, en función de su lectura, decidir si mostrar la temperatura, contar segundos o mostrar números impares.
 - medir_tiempo(): Llama a la función medir_tiempo() que actualiza los contadores de tiempo.
 - leer_temperatura(): Llama a la función leer_temperatura() para leer la temperatura del sensor analógico.
-- Luego, se leen los estados de un interruptor (slide_valor) y un botón (boton_sensor).
-- Dependiendo de los estados del interruptor y el botón, se llama a la función mostrar_count() para mostrar números en los displays de siete segmentos.
-- Si el botón está presionado, muestra la temperatura. Si el interruptor está en una posición, muestra números que incrementan. Si está en la otra posición, muestra números impares.
-- El unico cambio que se hizo en esta parte fue agrega un if y un else para controlar si el sistema funciona o no, segun si el photodiode recibe suficiente intesidad de luz.
+- que_mostrar_display(): LLama a la funcion y ahi se fija que mostrar en las displays, dependiendo de los valores leidos.
 
 ~~~ C++ (lenguaje en el que esta escrito)
 void loop()
-{
+{ 
   int lectura_photodiode = digitalRead(PHOTODIODE);
+ 
   if ( lectura_photodiode == 1)
   {
     digitalWrite(CENTENA, HIGH);
@@ -69,81 +68,70 @@ void loop()
   {
       medir_tiempo();
       leer_temperatura();
+      que_mostrar_display();
+   }
+}
+~~~
+### Funcion cambiar_direccion_cc
+Esta función se utiliza para cambiar la dirección de giro de un motor o dispositivo conectado a los pines 4 y 5. Si girar es verdadero, el motor gira en una dirección, de lo contrario, gira en la otra dirección.
 
-      int slide_valor = digitalRead(NUMEROS);
-      int boton_sensor = digitalRead(BOTON_SENSOR);
+~~~ C++ (lenguaje en el que esta escrito)
+void cambiar_direccion_cc(bool girar)
+{
+  if (girar == true)
+  {
+    digitalWrite(4, HIGH);
+    digitalWrite(5,LOW);
+  }
+  else
+  {
+    digitalWrite(4, LOW);
+    digitalWrite(5,HIGH);
+  }
+}
+~~~
+### Funcion que_mostrar_display
+Esta función decide qué se debe mostrar en el display de siete segmentos en función de la posición de un interruptor deslizante y el estado de un botón. Muestra la temperatura si el botón está presionado, muestra un contador si el interruptor está en una posición y muestra números impares si el interruptor está en la otra posición.
 
-      // Se fija que tiene que mostrar en los displays dependiendo del estado del slideSwitch o del pulsador
-      if(boton_sensor == 0){
+~~~ C++ (lenguaje en el que esta escrito)
+void que_mostrar_display(){
+  // Lee los valores del boton y del slideswitch
+  int slide_valor = digitalRead(NUMEROS);
+  int boton_sensor = digitalRead(BOTON_SENSOR);
+  // Se fija que tiene que mostrar en los displays dependiendo del estado del slideSwitch o del pulsador
+   	if(boton_sensor == 0){
         mostrar_count(temperatura); 
       }
       else if (slide_valor == 0){
         // Si el contador es mayor a 99 el contador se reinicia a 0
         if(count > 99)
         {
-         count = 0; 
+         	count = 0; 
         }
+        // Aca pasamos el numero que queremos mostrar en los displays
         mostrar_count(count);
-
-        digitalWrite(4, HIGH);
-        digitalWrite(5,LOW);
+        // Cambiamos la direccion del motor
+        cambiar_direccion_cc(true);
+        // Reiniciamos el contador para numeros impares
         count_impares = 0;
-
-      }
-      else
-      {
-
+     }
+     else
+     {
         bool num_impar = num_impares(count_impares);
         if (num_impar == true)
         {
+          // Aca se guarda el numero impar previo y despues muestra el numero impar encontrado
           guardar_num = count_impares;
           mostrar_count(count_impares);
         }else{
+          // Aca el numero impar previo se muestra hasta que se halla encontrado uno nuevo
           mostrar_count(guardar_num);
         }
-
-        digitalWrite(4, LOW);
-        digitalWrite(5,HIGH);
+        // Cambiamos la direccion del motor
+        cambiar_direccion_cc(false);
+        // Reiniciamos el contador para la secuencia de numeros
         count = 0;
-      }
-   }
-}
-~~~
-### Funcion mostrar_count
-
-Esta función muestra un número en los displays de siete segmentos. Recibe un número como argumento y utiliza pines de control (UNIDAD, DECENA, y CENTENA) para mostrar el número. Realiza la multiplexación de los displays para mostrar dígitos individuales.
-
-~~~ C++ (lenguaje en el que esta escrito)
-void mostrar_count(int numero)
-{
-  // Aca pasa la logica de multiplexacion, donde usando pines creo una diferencia potencial para prender el display
-  // que yo quiero
-  prenderLeds(numero - 10 * ((int)numero / 10));
-  digitalWrite(UNIDAD,LOW);
-  digitalWrite(DECENA,HIGH);
-  digitalWrite(CENTENA, HIGH);
-  
-  delay(15);
-  // Lo que pasa aca es que cuando el numero es de 3 cifras tengo un error para conseguir la CENTENA entonces hice un if para corregirlo
-  if ( numero > 99){
-    prenderLeds(((int)numero / 10)-10);
-  }else{
-    prenderLeds((int)numero / 10);
-  }
-  
-  digitalWrite(UNIDAD,HIGH);
-  digitalWrite(DECENA,LOW);
-  digitalWrite(CENTENA, HIGH);
-
-  delay(15);
-  
-  prenderLeds((int)numero / 100);
-  digitalWrite(UNIDAD,HIGH);
-  digitalWrite(DECENA,HIGH);
-  digitalWrite(CENTENA, LOW);
-
-  delay(15);
-  
+     }
 }
 ~~~
 
@@ -159,6 +147,7 @@ Se verifica de la siguiente manera:
 ~~~ C++ (lenguaje en el que esta escrito)
 bool num_impares(int num)
 {  
+  // Si el resto es diferente a 0 significa que es impar
 	if(num % 2 != 0)
     {
      return true ;
@@ -186,9 +175,7 @@ void medir_tiempo(){
 	  count += 1;
     count_impares +=1;
   }
-  
 }
-
 ~~~
 
 ### Funcion leer_temperatura
@@ -201,9 +188,76 @@ void leer_temperatura(){
   // Luego con el metodo map lo transformamos a celcius
   lectura = analogRead(SENSOR);
   temperatura = map(lectura,20,358,-40,125);
+}
+~~~
+
+### Funcion mostrar_count
+
+Esta función muestra un número en los displays de siete segmentos. Recibe un número como argumento y utiliza pines de control (UNIDAD, DECENA, y CENTENA) para mostrar el número. Realiza la multiplexación de los displays para mostrar dígitos individuales.
+- Aca hago la logica para mostrar en displays y hice para que mostrara los numeros negativos de la temperatura.
+
+~~~ C++ (lenguaje en el que esta escrito)
+void mostrar_count(int numero)
+{
+  // Aca pasa la logica de multiplexacion, donde usando pines creo una diferencia potencial para prender el display que yo quiero
+  // Si el numero es negativo hago una cosa mas para sacar el numero
+  // aca saco la unidad
+  if (numero < 0)
+  {
+    int num = -numero;
+    prenderLeds(num - 10 * ((int)num / 10));
+  }else{
+    prenderLeds(numero - 10 * ((int)numero / 10));
+  }
+
+  // Aca es donde se crea la diferencia de potencial LOW significa que es va a prender esa display, y el HIGH que esta apagado
+ 	digitalWrite(UNIDAD,LOW);
+  digitalWrite(DECENA,HIGH);
+  digitalWrite(CENTENA, HIGH);
+  
+  delay(15);
+  
+  // Aca tambien me fijo si el numero es mayor a 99 o si es negativo para hacer algo diferente y sacar la DECENA
+  if ( numero > 99){
+    prenderLeds(((int)numero / 10)-10);
+  }else if(numero < 0)
+  {
+    int num = -numero;
+    prenderLeds((int)num / 10);
+  }
+  else{
+    prenderLeds((int)numero / 10);
+  }
+  
+  digitalWrite(UNIDAD,HIGH);
+  digitalWrite(DECENA,LOW);
+  digitalWrite(CENTENA, HIGH);
+
+  delay(15);
+ //  Aca saco al DECENA
+  if(numero < 0)
+  {
+    digitalWrite(A, LOW);
+    digitalWrite(B, LOW);
+    digitalWrite(C, LOW);
+    digitalWrite(D, LOW);
+    digitalWrite(E, LOW);
+    digitalWrite(F, LOW);
+    digitalWrite(G, HIGH);
+  }else{
+    prenderLeds((int)numero / 100);
+  }
+  digitalWrite(UNIDAD,HIGH);
+  digitalWrite(DECENA,HIGH);
+  digitalWrite(CENTENA, LOW);
+
+  delay(15);
   
 }
 ~~~
+
+
+
 
 ### Funcion prenderLeds
 
@@ -315,4 +369,4 @@ En resumen, el código controla la visualización de números en displays de sie
 
 
 ## :robot: Link al proyecto
-- [Proyecto](https://www.tinkercad.com/things/kiYpaf3eyQz-copy-of-3-parte-parcial-ezequiel-cura/editel?sharecode=mgPzwsFieqlfpKbYVlydK5DRLxCf0Vo5KQw5JGIvAVw)
+- [Proyecto](https://www.tinkercad.com/things/kiYpaf3eyQz-4-parte-parcial-ezequiel-cura/editel?sharecode=mgPzwsFieqlfpKbYVlydK5DRLxCf0Vo5KQw5JGIvAVw)

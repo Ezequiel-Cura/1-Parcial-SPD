@@ -52,8 +52,9 @@ void setup()
 
 
 void loop()
-{
+{ 
   int lectura_photodiode = digitalRead(PHOTODIODE);
+ 
   if ( lectura_photodiode == 1)
   {
     digitalWrite(CENTENA, HIGH);
@@ -63,29 +64,46 @@ void loop()
   {
       medir_tiempo();
       leer_temperatura();
+      que_mostrar_display();
+   }
+}
 
-      int slide_valor = digitalRead(NUMEROS);
-      int boton_sensor = digitalRead(BOTON_SENSOR);
+void cambiar_direccion_cc(bool girar)
+{
+  if (girar == true)
+  {
+    digitalWrite(4, HIGH);
+    digitalWrite(5,LOW);
+  }
+  else
+  {
+    digitalWrite(4, LOW);
+    digitalWrite(5,HIGH);
+    
+  }
+  
+}
 
-      // Se fija que tiene que mostrar en los displays dependiendo del estado del slideSwitch o del pulsador
-      if(boton_sensor == 0){
+void que_mostrar_display(){
+  int slide_valor = digitalRead(NUMEROS);
+  int boton_sensor = digitalRead(BOTON_SENSOR);
+  // Se fija que tiene que mostrar en los displays dependiendo del estado del slideSwitch o del pulsador
+   	if(boton_sensor == 0){
         mostrar_count(temperatura); 
       }
       else if (slide_valor == 0){
         // Si el contador es mayor a 99 el contador se reinicia a 0
         if(count > 99)
         {
-         count = 0; 
+         	count = 0; 
         }
         mostrar_count(count);
-
-        digitalWrite(4, HIGH);
-        digitalWrite(5,LOW);
+        cambiar_direccion_cc(true);
         count_impares = 0;
 
-      }
-      else
-      {
+     }
+     else
+     {
 
         bool num_impar = num_impares(count_impares);
         if (num_impar == true)
@@ -96,12 +114,12 @@ void loop()
           mostrar_count(guardar_num);
         }
 
-        digitalWrite(4, LOW);
-        digitalWrite(5,HIGH);
+        cambiar_direccion_cc(false);
         count = 0;
-      }
-   }
+     }
+  
 }
+
 
 bool num_impares(int num)
 {  
@@ -132,18 +150,30 @@ void leer_temperatura(){
 
 void mostrar_count(int numero)
 {
+  
   // Aca pasa la logica de multiplexacion, donde usando pines creo una diferencia potencial para prender el display
   // que yo quiero
-  prenderLeds(numero - 10 * ((int)numero / 10));
-  digitalWrite(UNIDAD,LOW);
+  if (numero < 0)
+  {
+    int num = -numero;
+    prenderLeds(num - 10 * ((int)num / 10));
+  }else{
+    prenderLeds(numero - 10 * ((int)numero / 10));
+  }
+ 	digitalWrite(UNIDAD,LOW);
   digitalWrite(DECENA,HIGH);
   digitalWrite(CENTENA, HIGH);
   
   delay(15);
   
   if ( numero > 99){
-      prenderLeds(((int)numero / 10)-10);
-  }else{
+    prenderLeds(((int)numero / 10)-10);
+  }else if(numero < 0)
+  {
+    int num = -numero;
+    prenderLeds((int)num / 10);
+  }
+  else{
     prenderLeds((int)numero / 10);
   }
   
@@ -152,8 +182,19 @@ void mostrar_count(int numero)
   digitalWrite(CENTENA, HIGH);
 
   delay(15);
-  
-  prenderLeds((int)numero / 100);
+ 
+  if(numero < 0)
+  {
+    digitalWrite(A, LOW);
+    digitalWrite(B, LOW);
+    digitalWrite(C, LOW);
+    digitalWrite(D, LOW);
+    digitalWrite(E, LOW);
+    digitalWrite(F, LOW);
+    digitalWrite(G, HIGH);
+  }else{
+    prenderLeds((int)numero / 100);
+  }
   digitalWrite(UNIDAD,HIGH);
   digitalWrite(DECENA,HIGH);
   digitalWrite(CENTENA, LOW);
@@ -256,7 +297,6 @@ void prenderLeds(int count)
   }
   
 }
-
 
 
 
