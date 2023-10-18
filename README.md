@@ -87,17 +87,17 @@ void loop()
 
         digitalWrite(4, HIGH);
         digitalWrite(5,LOW);
-        count_primos = 0;
+        count_impares = 0;
 
       }
       else
       {
 
-        bool num_primo = num_primos(count_primos);
-        if (num_primo == true)
+        bool num_impar = num_impares(count_impares);
+        if (num_impar == true)
         {
-          guardar_num = count_primos;
-          mostrar_count(count_primos);
+          guardar_num = count_impares;
+          mostrar_count(count_impares);
         }else{
           mostrar_count(guardar_num);
         }
@@ -173,7 +173,7 @@ bool num_impares(int num)
 
 ### Funcion medir_tiempo
 
-Esta función actualiza los contadores de tiempo count y count_primos cada medio segundo (500 ms). Se utiliza para controlar la velocidad de incremento de los números.
+Esta función actualiza los contadores de tiempo count y count_impares cada medio segundo (500 ms). Se utiliza para controlar la velocidad de incremento de los números.
 Se utiliza la funcion millis para conseguir y actualizar los segundos de ejecucion del programa.
 
 ~~~ C++ (lenguaje en el que esta escrito)
@@ -184,7 +184,7 @@ void medir_tiempo(){
   if( tiempo2 >  tiempo1 + 500 ){
     tiempo1 = millis();
 	  count += 1;
-    count_primos +=1;
+    count_impares +=1;
   }
   
 }
