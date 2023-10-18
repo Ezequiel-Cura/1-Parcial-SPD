@@ -53,7 +53,7 @@ Esta es la función principal del programa que se ejecuta continuamente en un bu
 - leer_temperatura(): Llama a la función leer_temperatura() para leer la temperatura del sensor analógico.
 - Luego, se leen los estados de un interruptor (slide_valor) y un botón (boton_sensor).
 - Dependiendo de los estados del interruptor y el botón, se llama a la función mostrar_count() para mostrar números en los displays de siete segmentos.
-- Si el botón está presionado, muestra la temperatura. Si el interruptor está en una posición, muestra números que incrementan. Si está en la otra posición, muestra números primos.
+- Si el botón está presionado, muestra la temperatura. Si el interruptor está en una posición, muestra números que incrementan. Si está en la otra posición, muestra números impares.
 - El unico cambio que se hizo en esta parte fue agrega un if y un else para controlar si el sistema funciona o no, segun si el photodiode recibe suficiente intesidad de luz.
 
 ~~~ C++ (lenguaje en el que esta escrito)
@@ -306,7 +306,7 @@ void prenderLeds(int count)
 
 ~~~
 
-En resumen, el código controla la visualización de números en displays de siete segmentos en función de la posición de un interruptor y un botón, muestra temperaturas leídas de un sensor y realiza operaciones con números primos. También contiene funciones para determinar si un número es primo y para controlar la visualización en los displays.
+En resumen, el código controla la visualización de números en displays de siete segmentos en función de la posición de un interruptor y un botón, muestra temperaturas leídas de un sensor y realiza operaciones con números impares. También contiene funciones para determinar si un número es primo y para controlar la visualización en los displays.
 
 ## Diagrama del proyecto
 ![Diagrama](/Imagenes/tercera_parte/diagrama_tercera_parte_1.png)
